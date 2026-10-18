@@ -1,0 +1,185 @@
+{
+  "generatedAt": "2026-10-18T07:11:44.723Z",
+  "network": {
+    "holders": 792,
+    "seatsTotal": 2000,
+    "enrolled": 1049,
+    "online": 1024,
+    "everWorked": 1092,
+    "launchesLive": 647,
+    "jobsCompleted": 13652
+  },
+  "launches": {
+    "generatedAt": "2026-10-18T06:32:57.390Z",
+    "mainnetTokens": 338,
+    "buckets": {
+      "notTraded": 256,
+      "capUnder1k": 5,
+      "cap1kTo20k": 51,
+      "cap20kTo50k": 22,
+      "cap50kTo100k": 2,
+      "capOver100k": 2
+    },
+    "bucketsPct": {
+      "notTraded": 75.7,
+      "capUnder1k": 1.5,
+      "cap1kTo20k": 15.1,
+      "cap20kTo50k": 6.5,
+      "cap50kTo100k": 0.6,
+      "capOver100k": 0.6
+    },
+    "volOver1kPct": 2.4,
+    "volOver10kPct": 1.2
+  },
+  "backtest": {
+    "generatedAt": "2026-10-18T07:04:51.720Z",
+    "assumptions": {
+      "entryMinute": 2,
+      "exitMinute": 45,
+      "roundTripFee": 0.025,
+      "priceImpact": "not modelled (makes results worse)"
+    },
+    "tradedTokens": 82,
+    "backtested": 17,
+    "skipped": 65,
+    "winRateNet": 29.4,
+    "medianNetReturn45Pct": -2.5,
+    "meanNetReturn45Pct": 7.5,
+    "unlockEffect": {
+      "sample": 17,
+      "droppedBetweenMin45And65": 7,
+      "pct": 41.2
+    },
+    "bestTrades": [
+      "INFER 137.9%",
+      "OG 91.5%",
+      "SHIFT 70.1%",
+      "KEEL 27.0%",
+      "SCOOP 0.4%"
+    ],
+    "worstTrades": [
+      "ZTO -74.8%",
+      "IMD -47.7%",
+      "SNITCH -37.0%",
+      "BLOX -8.4%",
+      "PSS -7.3%"
+    ],
+    "trades": [
+      {
+        "symbol": "SHIFT",
+        "net45": 0.7005200343267745,
+        "move45to65": -0.08475381154922312
+      },
+      {
+        "symbol": "KEEL",
+        "net45": 0.270285137907038,
+        "move45to65": -0.2801923820307072
+      },
+      {
+        "symbol": "MEDICI",
+        "net45": -0.06057783650003066,
+        "move45to65": 0
+      },
+      {
+        "symbol": "BLOX",
+        "net45": -0.025,
+        "move45to65": 0
+      },
+      {
+        "symbol": "BLOX",
+        "net45": -0.08378768270387757,
+        "move45to65": 0
+      },
+      {
+        "symbol": "SNITCH",
+        "net45": -0.36982148778225665,
+        "move45to65": -0.11933705499941105
+      },
+      {
+        "symbol": "SCOOP",
+        "net45": 0.004133993555082725,
+        "move45to65": -0.20207591842375583
+      },
+      {
+        "symbol": "OG",
+        "net45": 0.9145239315061849,
+        "move45to65": 0.4285737541272743
+      },
+      {
+        "symbol": "INFER",
+        "net45": 1.3792854935400154,
+        "move45to65": 0.05331201081014436
+      },
+      {
+        "symbol": "TDEMO",
+        "net45": -0.025,
+        "move45to65": -0.05821550736322445
+      },
+      {
+        "symbol": "MEAT",
+        "net45": -0.047424331699443135,
+        "move45to65": -0.0031967655988315302
+      },
+      {
+        "symbol": "PSS",
+        "net45": -0.07337140210074741,
+        "move45to65": 0.0007269658650634891
+      },
+      {
+        "symbol": "QUANTUM",
+        "net45": -0.04711548484931136,
+        "move45to65": 0
+      },
+      {
+        "symbol": "SIMDTEST",
+        "net45": -0.013422925283741317,
+        "move45to65": 0
+      },
+      {
+        "symbol": "ADAM",
+        "net45": -0.025,
+        "move45to65": 0
+      },
+      {
+        "symbol": "IMD",
+        "net45": -0.4773419265499389,
+        "move45to65": 0
+      },
+      {
+        "symbol": "ZTO",
+        "net45": -0.7476253978222296,
+        "move45to65": -0.0004401561820253086
+      }
+    ]
+  },
+  "seatYield": {
+    "generatedAt": "2026-10-18T06:12:30.604Z",
+    "passiveOnline": {
+      "sampleSize": 4,
+      "avgAcceptedWork": 16.5,
+      "avgBuilderWinsInLast200": 1.25,
+      "avgUiTotalUsdPerSeat": 385.83,
+      "avgLiquidCashUsdPerSeat": 332.51,
+      "avgClaimedUsdPerSeat": 323.4,
+      "avgSellableUsdPerSeat": 9.11
+    },
+    "activeOperators": {
+      "sampleSize": 5,
+      "avgAcceptedWork": 529.2,
+      "avgBuilderWinsInLast200": 3.4,
+      "avgUiTotalUsdPerSeat": 1098.26,
+      "avgLiquidCashUsdPerSeat": 974.71,
+      "avgClaimedUsdPerSeat": 598.78,
+      "avgSellableUsdPerSeat": 375.93
+    },
+    "topGrinders": {
+      "sampleSize": 5,
+      "avgAcceptedWork": 4082.2,
+      "avgBuilderWinsInLast200": 3.8,
+      "avgUiTotalUsdPerSeat": 246.54,
+      "avgLiquidCashUsdPerSeat": 180.92,
+      "avgClaimedUsdPerSeat": 86.3,
+      "avgSellableUsdPerSeat": 94.62
+    }
+  }
+}
