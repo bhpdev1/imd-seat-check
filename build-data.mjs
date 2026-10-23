@@ -11,11 +11,22 @@ const CONCURRENCY = 6;
 
 fs.mkdirSync(OUT, { recursive: true });
 
-async function json(url) {
-  for (let attempt = 0; attempt < 3; attempt++) {
-    const r = await fetch(url, { headers: { accept: 'application/json', 'user-agent': 'seat-check-snapshot/1.0' } });
+const backoff = (attempt) => new Promise((s) => setTimeout(s, 5000 * (attempt + 1)));
+
+// Retries 429, transient 5xx (the API sometimes answers 503 for a few seconds) and network errors.
+async function json(url, attempts = 4) {
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    const last = attempt === attempts - 1;
+    let r;
+    try {
+      r = await fetch(url, { headers: { accept: 'application/json', 'user-agent': 'seat-check-snapshot/1.0' } });
+    } catch (err) {
+      if (last) throw err;
+      await backoff(attempt); continue;
+    }
     if (r.status === 404) return null;
-    if (r.status === 429) { await new Promise((s) => setTimeout(s, 5000 * (attempt + 1))); continue; }
+    if (r.status === 429) { await backoff(attempt); continue; }
+    if (r.status >= 500 && !last) { await backoff(attempt); continue; }
     if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`);
     return r.json();
   }
