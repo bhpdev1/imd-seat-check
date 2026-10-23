@@ -8,6 +8,11 @@ on:
 permissions:
   contents: write
 
+# One refresh at a time: a manual run and the cron must not race each other on main.
+concurrency:
+  group: refresh-snapshot
+  cancel-in-progress: false
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
@@ -29,4 +34,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/seats.json data/study.json
-          git diff --staged --quiet || (git commit -m "chore(data): auto-refresh 2,000-seat standing snapshot" && git push)
+          # main may have moved during the build (manual push, queued run): replay on top, the fresh snapshot wins.
+          git diff --staged --quiet || (git commit -m "chore(data): auto-refresh 2,000-seat standing snapshot" && git pull --rebase -X theirs origin main && git push)

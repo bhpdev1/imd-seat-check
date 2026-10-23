@@ -8,6 +8,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUT = path.join(__dirname, 'data');
 const API = 'https://api.imd.fun';
 const CONCURRENCY = 6;
+// The four step-1 endpoints are fatal if they fail, so they ride out longer DNS/503 blips (~3 min of backoff).
+const CRITICAL_ATTEMPTS = 9;
 
 fs.mkdirSync(OUT, { recursive: true });
 
@@ -47,7 +49,8 @@ async function pool(items, worker) {
 
 console.log('[1/4] swarm, owners, records, workers…');
 const [swarm, owners, records, workers] = await Promise.all([
-  json(`${API}/swarm`), json(`${API}/seats/owners`), json(`${API}/seats/records`), json(`${API}/workers`),
+  json(`${API}/swarm`, CRITICAL_ATTEMPTS), json(`${API}/seats/owners`, CRITICAL_ATTEMPTS),
+  json(`${API}/seats/records`, CRITICAL_ATTEMPTS), json(`${API}/workers`, CRITICAL_ATTEMPTS),
 ]);
 
 const recordBy = new Map((records.seats || []).map((s) => [String(s.tokenId), s]));
