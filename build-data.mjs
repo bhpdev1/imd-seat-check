@@ -10,6 +10,7 @@ const API = 'https://api.imd.fun';
 const CONCURRENCY = 6;
 // The four step-1 endpoints are fatal if they fail, so they ride out longer DNS/503 blips (~3 min of backoff).
 const CRITICAL_ATTEMPTS = 9;
+const MAX_FAILED_RATIO = 0.05;
 
 fs.mkdirSync(OUT, { recursive: true });
 
@@ -32,19 +33,19 @@ async function json(url, attempts = 4) {
     if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`);
     return r.json();
   }
-  return null;
+  throw new Error(`HTTP 429 after ${attempts} attempts ${url}`);
 }
 
 async function pool(items, worker) {
   const out = new Array(items.length);
-  let i = 0;
+  let i = 0, failed = 0;
   await Promise.all(Array.from({ length: CONCURRENCY }, async () => {
     while (i < items.length) {
       const idx = i++;
-      try { out[idx] = await worker(items[idx]); } catch { out[idx] = null; }
+      try { out[idx] = await worker(items[idx]); } catch { out[idx] = null; failed++; }
     }
   }));
-  return out;
+  return { out, failed };
 }
 
 console.log('[1/4] swarm, owners, records, workers…');
@@ -69,11 +70,17 @@ const ownerSeatCount = new Map();
 const toCheck = [...new Set([...recordBy.keys(), ...workerBy.keys()])].sort((a, b) => a - b);
 console.log(`[2/4] standing for ${toCheck.length} seats (concurrency ${CONCURRENCY})…`);
 let done = 0;
-const standings = await pool(toCheck, async (id) => {
+const { out: standings, failed } = await pool(toCheck, async (id) => {
   const s = await json(`${API}/seats/${id}/standing?queue=0`);
   if (++done % 100 === 0) console.log(`   ${done}/${toCheck.length}`);
   return s;
 });
+if (failed) console.log(`   ${failed}/${toCheck.length} standing requests failed`);
+// A failed standing publishes the seat as not enrolled / not qualified: past this ratio the API was down, keep the last snapshot.
+if (failed > toCheck.length * MAX_FAILED_RATIO) {
+  console.error(`aborting: over ${MAX_FAILED_RATIO * 100}% of standing requests failed, previous snapshot kept`);
+  process.exit(1);
+}
 const standingBy = new Map(toCheck.map((id, i) => [id, standings[i]]));
 
 console.log('[3/4] assembling seats.json…');
