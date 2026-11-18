@@ -8,6 +8,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUT = path.join(__dirname, 'data');
 const API = 'https://api.imd.fun';
 const CONCURRENCY = 6;
+// api.imd.fun allows 60 reads a minute per IP and answers 429 + Retry-After past that: staying under it makes the full run ~21 min.
+const MIN_GAP_MS = 1100;
 // The four step-1 endpoints are fatal if they fail, so they ride out longer DNS/503 blips (~3 min of backoff).
 const CRITICAL_ATTEMPTS = 9;
 const MAX_FAILED_RATIO = 0.05;
@@ -16,11 +18,21 @@ fs.mkdirSync(OUT, { recursive: true });
 
 const backoff = (attempt) => new Promise((s) => setTimeout(s, 5000 * (attempt + 1)));
 
+// Every request takes the next free slot, MIN_GAP_MS apart; a 429 moves the following slots past its Retry-After.
+let nextSlot = 0;
+async function slot() {
+  const at = Math.max(Date.now(), nextSlot);
+  nextSlot = at + MIN_GAP_MS;
+  const wait = at - Date.now();
+  if (wait > 0) await new Promise((s) => setTimeout(s, wait));
+}
+
 // Retries 429, transient 5xx (the API sometimes answers 503 for a few seconds) and network errors.
 async function json(url, attempts = 4) {
   for (let attempt = 0; attempt < attempts; attempt++) {
     const last = attempt === attempts - 1;
     let r;
+    await slot();
     try {
       r = await fetch(url, { headers: { accept: 'application/json', 'user-agent': 'seat-check-snapshot/1.0' } });
     } catch (err) {
@@ -28,7 +40,11 @@ async function json(url, attempts = 4) {
       await backoff(attempt); continue;
     }
     if (r.status === 404) return null;
-    if (r.status === 429) { await backoff(attempt); continue; }
+    if (r.status === 429) {
+      const retryAfter = Number(r.headers.get('retry-after')) || 60;
+      nextSlot = Math.max(nextSlot, Date.now() + (retryAfter + 1) * 1000);
+      continue;
+    }
     if (r.status >= 500 && !last) { await backoff(attempt); continue; }
     if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`);
     return r.json();
