@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-19T06:07:54.813Z",
+  "generatedAt": "2026-11-19T15:32:49.651Z",
   "network": {
     "holders": 792,
     "seatsTotal": 2000,
     "enrolled": 1085,
-    "online": 896,
+    "online": 894,
     "everWorked": 1156,
-    "launchesLive": 973,
-    "jobsCompleted": 16281
+    "launchesLive": 975,
+    "jobsCompleted": 16290
   },
   "launches": {
     "generatedAt": "2026-10-18T06:32:57.390Z",
